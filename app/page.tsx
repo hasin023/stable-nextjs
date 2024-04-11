@@ -7,6 +7,7 @@ function Home(): JSX.Element {
   const [inputValue, setInputValue] = useState<string>("")
   const [imageUrl, setImageUrl] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false)
+  const [isTextareaFocused, setIsTextareaFocused] = useState<boolean>(false)
 
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
@@ -31,22 +32,35 @@ function Home(): JSX.Element {
     setLoading(false)
   }
 
+  const handleTextareaFocus = () => {
+    setIsTextareaFocused(true)
+  }
+
+  const handleTextareaBlur = () => {
+    setIsTextareaFocused(false)
+  }
+
   return (
     <div className='min-h-screen bg-gray-100 py-4 flex flex-col justify-center sm:py-10'>
       <div className='relative py-1 sm:max-w-xl sm:mx-auto'>
-        <div className='relative px-4 py-8 bg-white shadow-lg sm:rounded-3xl sm:p-8'>
+        <div className='relative px-4 py-8 bg-white shadow-lg sm:rounded-lg sm:p-8'>
           <form onSubmit={handleSubmit} className='max-w-md mx-auto space-y-2'>
-            {" "}
-            <input
-              type='text'
+            <textarea
+              rows={2}
+              cols={20}
+              wrap=''
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              className='w-full px-3 py-2 mb-3 text-gray-700 bg-gray-200 rounded'
-              placeholder='Enter a prompt...'
+              onFocus={handleTextareaFocus}
+              onBlur={handleTextareaBlur}
+              className='w-full px-3 py-2 mb-3 text-gray-700 bg-gray-200 rounded focus:outline-none focus:ring focus:border-cyan-400'
+              placeholder='Enter your imagination...'
             />
             <button
               type='submit'
-              className='w-full px-3 py-2 text-white bg-gradient-to-r from-cyan-400 via-green-500 to-cyan-400 rounded-md focus:outline-none'
+              className={`w-full px-3 py-2 text-white bg-gradient-to-r from-cyan-400 via-green-500 to-cyan-400 rounded-md focus:outline-none ${
+                isTextareaFocused ? "mt-2" : "mt-0"
+              }`}
               disabled={loading}
             >
               Submit

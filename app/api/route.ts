@@ -19,15 +19,37 @@ export async function POST(request: NextRequest) {
     })
 
     const output = await replicate.run(
-      "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+      // SDXL Lightning 4-step
+      // "bytedance/sdxl-lightning-4step:727e49a643e999d602a896c774a0658ffefea21465756a6ce24b7ea4165eba6a",
+      // {
+      //   input: {
+      //     width: 1024,
+      //     height: 1024,
+      //     prompt: value,
+      //     scheduler: "K_EULER",
+      //     num_outputs: 1,
+      //     guidance_scale: 0,
+      //     negative_prompt: "worst quality, low quality",
+      //     num_inference_steps: 4,
+      //   },
+      // }
+
+      "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
       {
         input: {
+          width: 768,
+          height: 768,
           prompt: value,
-          image_dimensions: "512x512",
-          num_inference_steps: 12,
-          num_outputs: 1,
-          guideance_scale: 3.5,
+          refine: "expert_ensemble_refiner",
           scheduler: "K_EULER",
+          lora_scale: 0.6,
+          num_outputs: 1,
+          guidance_scale: 7.5,
+          apply_watermark: false,
+          high_noise_frac: 0.8,
+          negative_prompt: "",
+          prompt_strength: 0.8,
+          num_inference_steps: 25,
         },
       }
     )
