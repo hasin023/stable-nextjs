@@ -41,7 +41,7 @@ function Home(): JSX.Element {
   }
 
   return (
-    <div className='min-h-screen bg-gray-100 py-4 flex flex-col justify-center sm:py-10'>
+    <div className='min-h-screen bg-gray-200 py-4 flex flex-col justify-center sm:py-10'>
       <div className='relative py-1 sm:max-w-xl sm:mx-auto'>
         <div className='relative px-4 py-8 bg-white shadow-lg sm:rounded-lg sm:p-8'>
           <form onSubmit={handleSubmit} className='max-w-md mx-auto space-y-2'>
@@ -78,9 +78,9 @@ function Home(): JSX.Element {
           <Image
             src={imageUrl}
             alt='Generated image'
-            className='rounded-xl shadow-lg'
-            height={300}
-            width={300}
+            className='rounded-lg shadow-lg'
+            height={350}
+            width={350}
           />
         </div>
       )}
