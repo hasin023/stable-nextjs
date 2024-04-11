@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import Replicate from "replicate"
 
 export async function GET(request: NextRequest) {
   const requestUrl = request.url
@@ -12,9 +13,30 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const { value } = await request.json()
 
-  return NextResponse.json({
-    result: value,
-  })
+  try {
+    const replicate = new Replicate({
+      auth: process.env.REPLICATE_API_TOKEN,
+    })
+
+    const output = await replicate.run(
+      "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+      {
+        input: {
+          prompt: value,
+          image_dimensions: "512x512",
+          num_inference_steps: 12,
+          num_outputs: 1,
+          guideance_scale: 3.5,
+          scheduler: "K_EULER",
+        },
+      }
+    )
+
+    return NextResponse.json(output)
+  } catch (error) {
+    console.error(error)
+    NextResponse.json({ message: "Internal server error" }, { status: 500 })
+  }
 }
 
 export async function HEAD(request: NextRequest) {}
