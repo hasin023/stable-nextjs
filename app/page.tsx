@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react"
 import Image from "next/image"
 import hf from "@/config/huggingFace"
+import Link from "next/link"
 
 function Home(): JSX.Element {
   const [inputValue, setInputValue] = useState<string>(
@@ -57,7 +58,7 @@ function Home(): JSX.Element {
   return (
     <div className='min-h-screen bg-gray-200 py-4 flex flex-col justify-center sm:py-10'>
       <div className='relative py-1 sm:max-w-xl sm:mx-auto'>
-        <div className='relative px-4 py-8 bg-white shadow-lg sm:rounded-lg sm:p-8'>
+        <div className='relative px-6 py-8 bg-white shadow-lg sm:rounded-lg sm:py-6 sm:px-4'>
           <form onSubmit={handleSubmit} className='max-w-md mx-auto'>
             <textarea
               rows={2}
@@ -87,6 +88,12 @@ function Home(): JSX.Element {
               Submit
             </button>
           </form>
+          <Link
+            href='/image'
+            className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-lime-700'
+          >
+            Refine an image &rarr;
+          </Link>
         </div>
       </div>
       {loading && (
