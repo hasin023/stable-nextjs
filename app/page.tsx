@@ -2,8 +2,8 @@
 
 import { useState, FormEvent } from "react"
 import Image from "next/image"
-import hf from "@/config/huggingFace"
 import Link from "next/link"
+import { generateImage } from "@/utils/hf-handlers"
 
 function Home(): JSX.Element {
   const [inputValue, setInputValue] = useState<string>(
@@ -20,7 +20,7 @@ function Home(): JSX.Element {
     event.preventDefault()
     setLoading(true)
 
-    const response = await generateImage(inputValue)
+    const response = await generateImage(inputValue, negativeInput)
 
     if (response) {
       const imageUrl = URL.createObjectURL(response)
@@ -29,22 +29,6 @@ function Home(): JSX.Element {
       console.error("Error:", response)
     }
     setLoading(false)
-  }
-
-  const generateImage = async (input: string) => {
-    try {
-      const output = await hf.textToImage({
-        model: "stabilityai/stable-diffusion-xl-base-1.0",
-        inputs: input,
-        parameters: {
-          negative_prompt: negativeInput,
-        },
-      })
-
-      return output
-    } catch (error) {
-      console.error(error)
-    }
   }
 
   const handleTextareaFocus = () => {
@@ -80,7 +64,7 @@ function Home(): JSX.Element {
             />
             <button
               type='submit'
-              className={`w-full mt-5 px-3 py-2 text-white bg-gradient-to-r from-cyan-400 to-green-500 rounded-md focus:outline-none ${
+              className={`w-full mt-5 mb-1 px-3 py-2 text-white bg-gradient-to-r from-cyan-400 to-green-500 rounded-md focus:outline-none ${
                 isTextareaFocused ? "mt-2" : "mt-0"
               }`}
               disabled={loading}
@@ -88,18 +72,26 @@ function Home(): JSX.Element {
               Submit
             </button>
           </form>
-          <Link
-            href='/image/refine'
-            className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-lime-700'
-          >
-            Refine an image &rarr;
-          </Link>
-          <Link
-            href='/image/detect'
-            className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-lime-700'
-          >
-            Detect an image &rarr;
-          </Link>
+          <div className='flex justify-between -mb-2'>
+            <Link
+              href='/image/refine'
+              className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-lime-700'
+            >
+              Refine an image &rarr;
+            </Link>
+            <Link
+              href='/image/detect'
+              className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-lime-700'
+            >
+              Detect an image &rarr;
+            </Link>
+            <Link
+              href='/image/answer'
+              className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-lime-700'
+            >
+              Answer question &rarr;
+            </Link>
+          </div>
         </div>
       </div>
       {loading && (

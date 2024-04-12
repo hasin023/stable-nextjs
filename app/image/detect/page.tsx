@@ -3,7 +3,8 @@
 import { useState, ChangeEvent, FormEvent, useRef, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import hf from "@/config/huggingFace"
+import { convertImageToBlob } from "@/utils/utils"
+import { detectImage } from "@/utils/hf-handlers"
 
 function ImageUpload(): JSX.Element {
   const [imageFile, setImageFile] = useState<File | null>(null)
@@ -45,39 +46,6 @@ function ImageUpload(): JSX.Element {
     setLoading(false)
   }
 
-  const detectImage = async (imageFile: File) => {
-    try {
-      if (!imageFile) return
-
-      const imageBlob = await convertImageToBlob(imageFile)
-
-      const output = await hf.objectDetection({
-        data: imageBlob,
-        model: "facebook/detr-resnet-50",
-      })
-
-      return output
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const convertImageToBlob = async (imageFile: File) => {
-    const imageBlob = await new Promise<Blob>((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => {
-        const arrayBuffer = reader.result as ArrayBuffer
-        const type = imageFile?.type || "image/png"
-        const blob = new Blob([arrayBuffer], { type })
-        resolve(blob)
-      }
-      reader.onerror = reject
-      reader.readAsArrayBuffer(imageFile)
-    })
-
-    return imageBlob
-  }
-
   const handleImageLoad = () => {
     const img = imageRef.current
     if (img) {
@@ -115,7 +83,7 @@ function ImageUpload(): JSX.Element {
             />
             <button
               type='submit'
-              className='w-full mt-5 px-3 py-2 text-white bg-gradient-to-r from-cyan-400 to-green-500 rounded-md focus:outline-none'
+              className='w-full mt-5 mb-1 px-3 py-2 text-white bg-gradient-to-r from-cyan-400 to-green-500 rounded-md focus:outline-none'
               disabled={!imageFile || loading}
             >
               Detect Objects

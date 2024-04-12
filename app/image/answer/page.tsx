@@ -3,19 +3,25 @@
 import { useState, ChangeEvent, FormEvent } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { refineImage } from "@/utils/hf-handlers"
+import { answerQuestion } from "@/utils/hf-handlers"
+import ProgressBar from "@/components/ProgressBar"
 
 function ImageUpload(): JSX.Element {
   const [imageFile, setImageFile] = useState<File | null>(null)
-  const [promptInput, setPromptInput] = useState<string>("")
-  const [refinedImageUrl, setRefinedImageUrl] = useState<string | null>(null)
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null)
+  const [questionInput, setQuestionInput] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false)
+  const [answer, setAnswer] = useState<string>("")
+  const [score, setScore] = useState<number | null>(null)
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0]
     if (file) {
       setImageFile(file)
-      setRefinedImageUrl(null)
+      setAnswer("")
+      setScore(null)
+      const imageUrl = URL.createObjectURL(file)
+      setSelectedImageUrl(imageUrl)
     }
   }
 
@@ -26,13 +32,12 @@ function ImageUpload(): JSX.Element {
     if (!imageFile) return
 
     setLoading(true)
-    setRefinedImageUrl(null)
 
-    const response = await refineImage(promptInput, imageFile)
-
+    const response = await answerQuestion(questionInput, imageFile)
     if (response) {
-      const imageUrl = URL.createObjectURL(response)
-      setRefinedImageUrl(imageUrl)
+      console.log(response)
+      setAnswer(response.answer)
+      setScore(response.score)
     } else {
       console.error("Error:", response)
     }
@@ -53,17 +58,17 @@ function ImageUpload(): JSX.Element {
             />
             <input
               type='text'
-              value={promptInput}
-              onChange={(e) => setPromptInput(e.target.value)}
+              value={questionInput}
+              onChange={(e) => setQuestionInput(e.target.value)}
               className='w-full px-5 py-1 mt-3 text-gray-700 bg-gray-200 rounded focus:outline-none focus:ring focus:border-cyan-400'
-              placeholder='Enter a prompt'
+              placeholder='Ask your queries'
             />
             <button
               type='submit'
               className='w-full mt-5 mb-1 px-3 py-2 text-white bg-gradient-to-r from-cyan-400 to-green-500 rounded-md focus:outline-none'
               disabled={!imageFile || loading}
             >
-              Refine Image
+              Get Answer
             </button>
           </form>
           <Link
@@ -79,11 +84,17 @@ function ImageUpload(): JSX.Element {
           <div className='loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12'></div>
         </div>
       )}
-      {refinedImageUrl && (
+      {answer && score && (
+        <div className='mt-4 text-gray-800 flex flex-col items-center gap-4'>
+          <p className='text-xl font-semibold'>{`Answer => ${answer}`}</p>
+          <ProgressBar score={score} />
+        </div>
+      )}
+      {selectedImageUrl && (
         <div className='mt-12 flex justify-center'>
           <Image
-            src={refinedImageUrl}
-            alt='Refined image'
+            src={selectedImageUrl}
+            alt='Uploaded image'
             className='rounded-lg shadow-lg'
             height={350}
             width={350}
