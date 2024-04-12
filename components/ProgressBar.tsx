@@ -6,7 +6,7 @@ interface ProgressBarProps {
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ score }) => {
   const formattedScore = (score * 100).toFixed(2)
-  const circumference = 50 * 2 * Math.PI
+  const circumference = 60 * Math.PI
   const percent = score * 100
   const offset = circumference - (percent / 100) * circumference
   console.log(offset)

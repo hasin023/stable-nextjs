@@ -86,7 +86,9 @@ function ImageUpload(): JSX.Element {
       )}
       {answer && score && (
         <div className='mt-4 text-gray-800 flex flex-col items-center gap-4'>
-          <p className='text-xl font-semibold'>{`Answer => ${answer}`}</p>
+          <div className='w-60 rounded-lg border-2 border-dashed border-lime-600/30 bg-teal-100/50 px-4 py-4 text-teal-800'>
+            <h4 className='text-center'>{answer}</h4>
+          </div>
           <ProgressBar score={score} />
         </div>
       )}
