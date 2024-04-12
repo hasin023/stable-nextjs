@@ -80,7 +80,7 @@ function Home(): JSX.Element {
             />
             <button
               type='submit'
-              className={`w-full mt-5 px-3 py-2 text-white bg-gradient-to-r from-cyan-400 via-green-500 to-cyan-400 rounded-md focus:outline-none ${
+              className={`w-full mt-5 px-3 py-2 text-white bg-gradient-to-r from-cyan-400 to-green-500 rounded-md focus:outline-none ${
                 isTextareaFocused ? "mt-2" : "mt-0"
               }`}
               disabled={loading}

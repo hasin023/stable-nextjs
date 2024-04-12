@@ -7,6 +7,7 @@ import hf from "@/config/huggingFace"
 
 function ImageUpload(): JSX.Element {
   const [imageFile, setImageFile] = useState<File | null>(null)
+  const [promptInput, setPromptInput] = useState<string>("")
   const [refinedImageUrl, setRefinedImageUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -14,6 +15,7 @@ function ImageUpload(): JSX.Element {
     const file = event.target.files?.[0]
     if (file) {
       setImageFile(file)
+      setRefinedImageUrl(null)
     }
   }
 
@@ -24,12 +26,50 @@ function ImageUpload(): JSX.Element {
     if (!imageFile) return
 
     setLoading(true)
-    try {
-      console.log("")
-    } catch (error) {
-      console.error("Error refining image:", error)
+    setRefinedImageUrl(null)
+
+    const response = await refineImage(promptInput, imageFile)
+
+    if (response) {
+      const imageUrl = URL.createObjectURL(response)
+      setRefinedImageUrl(imageUrl)
+    } else {
+      console.error("Error:", response)
     }
+
     setLoading(false)
+  }
+
+  const refineImage = async (prompt: string, imageFile: File) => {
+    try {
+      if (!imageFile) return
+
+      const imageBlob = await new Promise<Blob>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+          const arrayBuffer = reader.result as ArrayBuffer
+          const type = imageFile?.type || "image/png"
+          const blob = new Blob([arrayBuffer], { type })
+          resolve(blob)
+        }
+        reader.onerror = reject
+        reader.readAsArrayBuffer(imageFile)
+      })
+      console.log(imageBlob)
+
+      // Image to Image service is unavailable from HuggingFace JS
+      const output = await hf.imageToImage({
+        inputs: imageBlob,
+        parameters: {
+          prompt: prompt,
+        },
+        model: "lllyasviel/sd-controlnet-depth",
+      })
+
+      return output
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
@@ -43,9 +83,16 @@ function ImageUpload(): JSX.Element {
               onChange={handleFileChange}
               className='w-full px-5 py-3 text-gray-700 bg-gray-200 rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-cyan-500 hover:file:bg-gradient-to-r to-cyan-400 from-green-500 hover:file:text-cyan-50'
             />
+            <input
+              type='text'
+              value={promptInput}
+              onChange={(e) => setPromptInput(e.target.value)}
+              className='w-full px-5 py-1 mt-3 text-gray-700 bg-gray-200 rounded focus:outline-none focus:ring focus:border-cyan-400'
+              placeholder='Enter a prompt'
+            />
             <button
               type='submit'
-              className='w-full mt-5 px-3 py-2 text-white bg-gradient-to-r from-cyan-400 via-green-500 to-cyan-400 rounded-md focus:outline-none'
+              className='w-full mt-5 px-3 py-2 text-white bg-gradient-to-r from-cyan-400 to-green-500 rounded-md focus:outline-none'
               disabled={!imageFile || loading}
             >
               Refine Image
