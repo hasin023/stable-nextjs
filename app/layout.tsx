@@ -5,8 +5,9 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Generate Image",
-  description: "A simple image generator using Stable Diffusion.",
+  title: "Face Image",
+  description:
+    "A simple image generator using Stable Diffusion with huggingfacejs inferences.",
 }
 
 export default function RootLayout({

@@ -6,7 +6,7 @@ import Link from "next/link"
 import { answerQuestion } from "@/utils/hf-handlers"
 import ProgressBar from "@/components/ProgressBar"
 
-function ImageUpload(): JSX.Element {
+function QuestionAnswer(): JSX.Element {
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null)
   const [questionInput, setQuestionInput] = useState<string>("")
@@ -122,4 +122,4 @@ function ImageUpload(): JSX.Element {
   )
 }
 
-export default ImageUpload
+export default QuestionAnswer
