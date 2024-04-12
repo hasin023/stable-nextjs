@@ -2,9 +2,13 @@
 
 import { useState, FormEvent } from "react"
 import Image from "next/image"
+import hf from "@/config/huggingFace"
 
 function Home(): JSX.Element {
-  const [inputValue, setInputValue] = useState<string>("")
+  const [inputValue, setInputValue] = useState<string>(
+    "An astronaut riding a rainbow unicorn, cinematic, dramatic"
+  )
+  const [negativeInput, setnegativeInput] = useState<string>("")
   const [imageUrl, setImageUrl] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false)
   const [isTextareaFocused, setIsTextareaFocused] = useState<boolean>(false)
@@ -15,21 +19,31 @@ function Home(): JSX.Element {
     event.preventDefault()
     setLoading(true)
 
-    const response = await fetch("/api", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ value: inputValue }),
-    })
+    const response = await generateImage(inputValue)
 
-    if (response.ok) {
-      const data: string[] = await response.json()
-      setImageUrl(data[0])
+    if (response) {
+      const imageUrl = URL.createObjectURL(response)
+      setImageUrl(imageUrl)
     } else {
-      console.error("Error:", response.statusText)
+      console.error("Error:", response)
     }
     setLoading(false)
+  }
+
+  const generateImage = async (input: string) => {
+    try {
+      const output = await hf.textToImage({
+        model: "stabilityai/stable-diffusion-xl-base-1.0",
+        inputs: input,
+        parameters: {
+          negative_prompt: negativeInput,
+        },
+      })
+
+      return output
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const handleTextareaFocus = () => {
@@ -44,7 +58,7 @@ function Home(): JSX.Element {
     <div className='min-h-screen bg-gray-200 py-4 flex flex-col justify-center sm:py-10'>
       <div className='relative py-1 sm:max-w-xl sm:mx-auto'>
         <div className='relative px-4 py-8 bg-white shadow-lg sm:rounded-lg sm:p-8'>
-          <form onSubmit={handleSubmit} className='max-w-md mx-auto space-y-2'>
+          <form onSubmit={handleSubmit} className='max-w-md mx-auto'>
             <textarea
               rows={2}
               cols={20}
@@ -53,12 +67,19 @@ function Home(): JSX.Element {
               onChange={(e) => setInputValue(e.target.value)}
               onFocus={handleTextareaFocus}
               onBlur={handleTextareaBlur}
-              className='w-full px-3 py-2 mb-3 text-gray-700 bg-gray-200 rounded focus:outline-none focus:ring focus:border-cyan-400'
+              className='w-full px-3 py-2 text-gray-700 bg-gray-200 rounded focus:outline-none focus:ring focus:border-cyan-400'
               placeholder='Enter your imagination...'
+            />
+            <input
+              type='text'
+              value={negativeInput}
+              onChange={(e) => setnegativeInput(e.target.value)}
+              className='w-full px-5 py-3 text-gray-700 bg-gray-200 rounded focus:outline-none focus:ring focus:border-cyan-400'
+              placeholder='Enter a negative prompt'
             />
             <button
               type='submit'
-              className={`w-full px-3 py-2 text-white bg-gradient-to-r from-cyan-400 via-green-500 to-cyan-400 rounded-md focus:outline-none ${
+              className={`w-full mt-5 px-3 py-2 text-white bg-gradient-to-r from-cyan-400 via-green-500 to-cyan-400 rounded-md focus:outline-none ${
                 isTextareaFocused ? "mt-2" : "mt-0"
               }`}
               disabled={loading}
