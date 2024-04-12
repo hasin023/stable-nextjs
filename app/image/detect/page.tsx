@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, ChangeEvent, FormEvent } from "react"
+import { useState, ChangeEvent, FormEvent, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import hf from "@/config/huggingFace"
@@ -8,13 +8,16 @@ import hf from "@/config/huggingFace"
 function ImageUpload(): JSX.Element {
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [detectedImageUrl, setDetectedImageUrl] = useState<string | null>(null)
+  const [detectedObjects, setDetectedObjects] = useState<any[]>([])
   const [loading, setLoading] = useState<boolean>(false)
+  const imageRef = useRef<HTMLImageElement>(null)
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0]
     if (file) {
       setImageFile(file)
       setDetectedImageUrl(null)
+      setDetectedObjects([])
     }
   }
 
@@ -26,15 +29,15 @@ function ImageUpload(): JSX.Element {
 
     setLoading(true)
     setDetectedImageUrl(null)
+    setDetectedObjects([])
 
     const imageToDetect = await convertImageToBlob(imageFile)
     const response = await detectImage(imageFile)
 
     if (response) {
-      console.log(response)
-
       const imageUrl = URL.createObjectURL(imageToDetect)
       setDetectedImageUrl(imageUrl)
+      setDetectedObjects(response)
     } else {
       console.error("Error:", response)
     }
@@ -53,6 +56,7 @@ function ImageUpload(): JSX.Element {
         model: "facebook/detr-resnet-50",
       })
 
+      console.log(output)
       return output
     } catch (error) {
       console.error(error)
@@ -107,17 +111,55 @@ function ImageUpload(): JSX.Element {
           <div className='loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12'></div>
         </div>
       )}
+
       {detectedImageUrl && (
-        <div className='mt-12 flex justify-center'>
+        <div className='mt-12 flex justify-center relative'>
           <Image
             src={detectedImageUrl}
             alt='Refined image'
             className='rounded-lg shadow-lg'
             height={350}
             width={350}
+            ref={imageRef}
+            onLoadingComplete={(img) => {
+              const imageWidth = img.naturalWidth || 350
+              const imageHeight = img.naturalHeight || 350
+              const scale = Math.min(
+                (0.8 * 350) / imageWidth,
+                (0.8 * 350) / imageHeight
+              )
+
+              detectedObjects.forEach((obj) => {
+                obj.box.xmin = (obj.box.xmin + 10) * scale
+                obj.box.ymin = (obj.box.ymin + 10) * scale
+                obj.box.xmax = (obj.box.xmax - 10) * scale
+                obj.box.ymax = (obj.box.ymax - 10) * scale
+              })
+            }}
           />
+          {detectedObjects.map((obj, index) => (
+            <div
+              key={index}
+              className='absolute'
+              style={{
+                left: `${obj.box.xmin}px`,
+                top: `${obj.box.ymin}px`,
+                width: `${obj.box.xmax - obj.box.xmin}px`,
+                height: `${obj.box.ymax - obj.box.ymin}px`,
+                border: "1px solid red",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <span className='text-white font-bold text-xs bg-red-500 px-1 py-1 rounded-sm'>
+                {obj.label} ({(obj.score * 100).toFixed(2)}%)
+              </span>
+            </div>
+          ))}
         </div>
       )}
+
       <style jsx>{`
         .loader {
           animation: spin 1s linear infinite;
