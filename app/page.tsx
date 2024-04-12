@@ -89,10 +89,16 @@ function Home(): JSX.Element {
             </button>
           </form>
           <Link
-            href='/image'
+            href='/image/refine'
             className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-lime-700'
           >
             Refine an image &rarr;
+          </Link>
+          <Link
+            href='/image/detect'
+            className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-lime-700'
+          >
+            Detect an image &rarr;
           </Link>
         </div>
       </div>

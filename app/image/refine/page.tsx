@@ -63,7 +63,7 @@ function ImageUpload(): JSX.Element {
         parameters: {
           prompt: prompt,
         },
-        model: "lllyasviel/sd-controlnet-depth",
+        model: "stabilityai/stable-diffusion-xl-refiner-1.0",
       })
 
       return output
