@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, ChangeEvent, FormEvent, useRef } from "react"
+import { useState, ChangeEvent, FormEvent, useRef, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import hf from "@/config/huggingFace"
@@ -56,7 +56,6 @@ function ImageUpload(): JSX.Element {
         model: "facebook/detr-resnet-50",
       })
 
-      console.log(output)
       return output
     } catch (error) {
       console.error(error)
@@ -77,6 +76,30 @@ function ImageUpload(): JSX.Element {
     })
 
     return imageBlob
+  }
+
+  const handleImageLoad = () => {
+    const img = imageRef.current
+    if (img) {
+      const imageWidth = img.naturalWidth || 350
+      const imageHeight = img.naturalHeight || 350
+      const scale = Math.min(
+        (0.9 * 350) / imageWidth,
+        (0.9 * 350) / imageHeight
+      )
+
+      setDetectedObjects((prevObjects) => {
+        return prevObjects.map((obj) => ({
+          ...obj,
+          box: {
+            xmin: (obj.box.xmin + 10) * scale,
+            ymin: (obj.box.ymin + 10) * scale,
+            xmax: (obj.box.xmax - 10) * scale,
+            ymax: (obj.box.ymax - 10) * scale,
+          },
+        }))
+      })
+    }
   }
 
   return (
@@ -121,26 +144,13 @@ function ImageUpload(): JSX.Element {
             height={350}
             width={350}
             ref={imageRef}
-            onLoadingComplete={(img) => {
-              const imageWidth = img.naturalWidth || 350
-              const imageHeight = img.naturalHeight || 350
-              const scale = Math.min(
-                (0.8 * 350) / imageWidth,
-                (0.8 * 350) / imageHeight
-              )
-
-              detectedObjects.forEach((obj) => {
-                obj.box.xmin = (obj.box.xmin + 10) * scale
-                obj.box.ymin = (obj.box.ymin + 10) * scale
-                obj.box.xmax = (obj.box.xmax - 10) * scale
-                obj.box.ymax = (obj.box.ymax - 10) * scale
-              })
-            }}
+            onLoad={() => handleImageLoad()}
           />
+
           {detectedObjects.map((obj, index) => (
             <div
               key={index}
-              className='absolute'
+              className='absolute ml-[38rem]'
               style={{
                 left: `${obj.box.xmin}px`,
                 top: `${obj.box.ymin}px`,
