@@ -27,7 +27,14 @@ function AudioUpload(): JSX.Element {
     if (!audioFile) return
 
     setLoading(true)
-    // TODO -> Transcribe Audio
+
+    const response = await transcribeAudio(audioFile)
+    if (response) {
+      console.log(response)
+    } else {
+      console.error("Error:", response)
+    }
+
     setLoading(false)
   }
 

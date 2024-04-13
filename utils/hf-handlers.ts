@@ -1,5 +1,5 @@
 import hf from "@/config/huggingFace"
-import { convertImageToBlob } from "./utils"
+import { convertAudioToBlob, convertImageToBlob } from "./utils"
 
 export const generateImage = async (input: string, negativeInput: string) => {
   try {
@@ -78,6 +78,15 @@ export const answerQuestion = async (question: string, imageFile: File) => {
 export const transcribeAudio = async (audioFile: File) => {
   try {
     if (!audioFile) return
+
+    const audioBlob = await convertAudioToBlob(audioFile)
+
+    const output = await hf.automaticSpeechRecognition({
+      model: "openai/whisper-large-v3",
+      data: audioBlob,
+    })
+
+    return output
     return audioFile
   } catch (error) {
     console.error(error)

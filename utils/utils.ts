@@ -14,7 +14,7 @@ export const convertImageToBlob = async (imageFile: File) => {
   return imageBlob
 }
 
-export const convertMp3ToFlac = async (audioFile: File) => {
+export const convertAudioToBlob = async (audioFile: File) => {
   const audioBlob = await new Promise<Blob>((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => {
