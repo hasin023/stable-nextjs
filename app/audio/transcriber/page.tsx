@@ -4,9 +4,15 @@ import { useState, ChangeEvent, FormEvent, useRef } from "react"
 import Link from "next/link"
 import { transcribeAudio } from "@/utils/hf-handlers"
 
+interface TranscribeResponse {
+  text: string
+}
+
 function AudioUpload(): JSX.Element {
   const [audioFile, setAudioFile] = useState<File | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+  const [transcribedText, setTranscribedText] =
+    useState<TranscribeResponse | null>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -17,6 +23,7 @@ function AudioUpload(): JSX.Element {
         audioRef.current.pause()
         audioRef.current.currentTime = 0
       }
+      setTranscribedText(null)
     }
   }
 
@@ -27,12 +34,13 @@ function AudioUpload(): JSX.Element {
     if (!audioFile) return
 
     setLoading(true)
-
     const response = await transcribeAudio(audioFile)
+
     if (response) {
-      console.log(response)
+      setTranscribedText(response)
     } else {
       console.error("Error:", response)
+      setTranscribedText(null)
     }
 
     setLoading(false)
@@ -71,8 +79,16 @@ function AudioUpload(): JSX.Element {
         </div>
       )}
 
+      {transcribedText && (
+        <div className='mt-8 text-gray-800 flex flex-col items-center gap-4'>
+          <div className='w-94 rounded-lg border-2 border-dashed border-lime-600/30 bg-teal-100/50 px-4 py-4 text-teal-800'>
+            <h4 className='text-center'>{transcribedText.text}</h4>
+          </div>
+        </div>
+      )}
+
       {audioFile && (
-        <div className='mt-12 flex justify-center relative'>
+        <div className='mt-8 flex justify-center relative'>
           <audio key={audioFile?.name} ref={audioRef} controls>
             <source src={URL.createObjectURL(audioFile)} />
             Your browser does not support the audio element.

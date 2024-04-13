@@ -87,7 +87,6 @@ export const transcribeAudio = async (audioFile: File) => {
     })
 
     return output
-    return audioFile
   } catch (error) {
     console.error(error)
   }
