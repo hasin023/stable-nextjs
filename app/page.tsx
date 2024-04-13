@@ -107,10 +107,10 @@ function Home(): JSX.Element {
               Translate text &rarr;
             </Link>
             <Link
-              href='/audio/answer'
+              href='/audio/generate'
               className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-cyan-700'
             >
-              Answer Audio &rarr;
+              Generate Audio &rarr;
             </Link>
           </div>
         </div>

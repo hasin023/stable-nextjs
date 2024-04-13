@@ -95,3 +95,18 @@ export const transcribeAudio = async (audioFile: File) => {
 export const translateText = async (text: string) => {
   return text
 }
+
+export const generateAudio = async (text: string) => {
+  try {
+    if (!text) return
+
+    const output = await hf.textToSpeech({
+      model: "facebook/mms-tts-eng",
+      inputs: text,
+    })
+
+    return output
+  } catch (error) {
+    console.error(error)
+  }
+}
