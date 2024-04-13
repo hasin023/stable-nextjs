@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, ChangeEvent, FormEvent, useRef, useEffect } from "react"
+import { useState, ChangeEvent, FormEvent, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { convertImageToBlob } from "@/utils/utils"

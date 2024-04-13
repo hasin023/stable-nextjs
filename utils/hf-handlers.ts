@@ -74,3 +74,12 @@ export const answerQuestion = async (question: string, imageFile: File) => {
     console.error(error)
   }
 }
+
+export const transcribeAudio = async (audioFile: File) => {
+  try {
+    if (!audioFile) return
+    return audioFile
+  } catch (error) {
+    console.error(error)
+  }
+}

@@ -92,6 +92,27 @@ function Home(): JSX.Element {
               Answer question &rarr;
             </Link>
           </div>
+
+          <div className='flex justify-between -mb-2 mt-1'>
+            <Link
+              href='/audio/transcriber'
+              className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-cyan-700'
+            >
+              Audio transcriber &rarr;
+            </Link>
+            <Link
+              href='/audio/detect'
+              className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-cyan-700'
+            >
+              Detect Audio &rarr;
+            </Link>
+            <Link
+              href='/audio/answer'
+              className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-cyan-700'
+            >
+              Answer Audio &rarr;
+            </Link>
+          </div>
         </div>
       </div>
       {loading && (
