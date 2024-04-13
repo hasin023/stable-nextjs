@@ -23,7 +23,6 @@ export const refineImage = async (prompt: string, imageFile: File) => {
 
     const imageBlob = await convertImageToBlob(imageFile)
 
-    // Image to Image service is unavailable from HuggingFace JS
     const output = await hf.imageToImage({
       inputs: imageBlob,
       parameters: {
@@ -92,8 +91,15 @@ export const transcribeAudio = async (audioFile: File) => {
   }
 }
 
-export const translateText = async (text: string) => {
-  return text
+export const refineAudio = async (audioFile: File) => {
+  if (!audioFile) return
+
+  const output = await hf.audioToAudio({
+    model: "speechbrain/mtl-mimic-voicebank",
+    data: audioFile,
+  })
+
+  return output
 }
 
 export const generateAudio = async (text: string) => {
