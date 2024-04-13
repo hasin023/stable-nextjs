@@ -91,3 +91,7 @@ export const transcribeAudio = async (audioFile: File) => {
     console.error(error)
   }
 }
+
+export const translateText = async (text: string) => {
+  return text
+}

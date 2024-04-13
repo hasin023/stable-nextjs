@@ -3,6 +3,7 @@
 import { useState, ChangeEvent, FormEvent, useRef } from "react"
 import Link from "next/link"
 import { transcribeAudio } from "@/utils/hf-handlers"
+import StreamingText from "@/components/StreamingText"
 
 interface TranscribeResponse {
   text: string
@@ -82,7 +83,7 @@ function AudioUpload(): JSX.Element {
       {transcribedText && (
         <div className='mt-8 text-gray-800 flex flex-col items-center gap-4'>
           <div className='w-94 rounded-lg border-2 border-dashed border-lime-600/30 bg-teal-100/50 px-4 py-4 text-teal-800'>
-            <h4 className='text-center'>{transcribedText.text}</h4>
+            <StreamingText text={transcribedText.text} />
           </div>
         </div>
       )}
