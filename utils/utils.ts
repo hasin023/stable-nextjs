@@ -13,3 +13,18 @@ export const convertImageToBlob = async (imageFile: File) => {
 
   return imageBlob
 }
+
+export const convertMp3ToFlac = async (audioFile: File) => {
+  const audioBlob = await new Promise<Blob>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const arrayBuffer = reader.result as ArrayBuffer
+      const blob = new Blob([arrayBuffer], { type: "audio/flac" })
+      resolve(blob)
+    }
+    reader.onerror = reject
+    reader.readAsArrayBuffer(audioFile)
+  })
+
+  return audioBlob
+}

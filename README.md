@@ -1,6 +1,6 @@
-# Stable Diffusion - Next.js
+# Hugging AI - Next.js
 
-A simple Image generator web app using the stable diffusion model.
+A simple all in one AI tool for generating, detecting, transcribing different file formats in the web using various LLMs with huggingfaceJS.
 
 ## Getting Started
 
@@ -11,5 +11,3 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
