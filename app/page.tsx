@@ -93,18 +93,12 @@ function Home(): JSX.Element {
             </Link>
           </div>
 
-          <div className='flex justify-between -mb-2 mt-1'>
+          <div className='flex justify-center -mb-2 mt-1'>
             <Link
               href='/audio/transcriber'
               className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-cyan-700'
             >
               Audio transcriber &rarr;
-            </Link>
-            <Link
-              href='/audio/refine'
-              className='text-gray-600 text-sm px-2 py-1 hover:underline hover:text-cyan-700'
-            >
-              Refine audio &rarr;
             </Link>
             <Link
               href='/audio/generate'

@@ -91,17 +91,6 @@ export const transcribeAudio = async (audioFile: File) => {
   }
 }
 
-export const refineAudio = async (audioFile: File) => {
-  if (!audioFile) return
-
-  const output = await hf.audioToAudio({
-    model: "speechbrain/mtl-mimic-voicebank",
-    data: audioFile,
-  })
-
-  return output
-}
-
 export const generateAudio = async (text: string) => {
   try {
     if (!text) return
